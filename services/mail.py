@@ -1,20 +1,30 @@
 #imports
 import msal 
 import requests
-from config import CLIENT_ID,CLIENT_SECRET,TENANT_ID
+from config import CLIENT_ID
 
 #get token
 def get_access_token():
-    app = msal.ConfidentialClientApplication(
-    CLIENT_ID,
-    authority=f"https://login.microsoftonline.com/{TENANT_ID}",
-    client_credential=CLIENT_SECRET
+    app = msal.PublicClientApplication(
+        CLIENT_ID,
+        authority="https://login.microsoftonline.com/consumers"
     )
     
-    #get token
-    result = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
+    # Try to get token silently first
+    accounts = app.get_accounts()
+    if accounts:
+        result = app.acquire_token_silent(
+            ["Mail.Read", "User.Read"],
+            account=accounts[0]
+        )
+        if result:
+            return result
+    
+    # Device code flow for first time auth
+    flow = app.initiate_device_flow(scopes=["Mail.Read", "User.Read"])
+    print(flow["message"])
+    result = app.acquire_token_by_device_flow(flow)
     return result
-
 def fetch_emails():
 
     #get token
