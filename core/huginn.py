@@ -7,12 +7,14 @@ from services.mail import fetch_emails
 
 #main class for it
 class Huginn(threading.Thread):
-    def __init__(self):
+    def __init__(self,alert_queue):
         super().__init__(daemon=True)
         #keeps running
         self.running = True
         #track and prevent repeats for emails
         self.seen_ids = set()
+        #self alert queue
+        self.alert_queue = alert_queue
 
 
 
@@ -31,7 +33,7 @@ class Huginn(threading.Thread):
                     sender = email.get("from", {}).get("emailAddress", {}).get("name", "Unknown")
                     subject = email.get("subject", "No Subject")
                     if self.should_alert(sender, subject):
-                        print(f"Huginn returns: New message from {sender} — {subject}")
+                        self.alert_queue.put(f"New message from {sender}. Subject: {subject}")
 
                 #delay
                 time.sleep(POLL_INTERVAL)
