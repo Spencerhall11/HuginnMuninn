@@ -55,7 +55,8 @@ class Muninn(threading.Thread):
                 #transcribe audio
                 text = transcribe_audio(self.whisper, audio)
                 #check for wake up word
-                if "hey muninn" in text:
+                if any(w in text for w in ["command", "muninn", "mionan", "moonen", "munn", "munin", "mutant", "munen", "mune", "my unit", "moonin"]):
+                    self.handle_command(text)
                 #if woken, record command
                     self.speak("Muninn listens")
                     command_audio = record_audio(duration=4)
@@ -72,6 +73,8 @@ class Muninn(threading.Thread):
             self.speak("Pausing playback")
         elif "read" in command:
             self.speak("Reading email")
+        elif "command" in command and "open" in command:
+            self.speak("Opening email")
         elif "open" in command:
             self.speak("Opening email")
         else:

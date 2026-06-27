@@ -17,8 +17,10 @@ def main():
         muninn.start()
         muninn.join()
     except KeyboardInterrupt:
-        #message for shutdown
         print("Huginn and Muninn have returned")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
 
 
 #run it

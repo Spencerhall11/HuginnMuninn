@@ -24,6 +24,7 @@ def get_access_token():
     flow = app.initiate_device_flow(scopes=["Mail.Read", "User.Read"])
     print(flow["message"])
     result = app.acquire_token_by_device_flow(flow)
+    print("Authentication successful")
     return result
 def fetch_emails():
 
