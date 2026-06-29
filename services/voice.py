@@ -19,14 +19,13 @@ def record_audio(duration=3):
         device=1
     )
     sd.wait()
-    print(f"Audio captured, max amplitude: {audio.max()}")
     return audio.flatten()
 
 #transcribe the audio
 def transcribe_audio(model, audio):
     segments, _ = model.transcribe(audio, language="en", vad_filter=False)
     segments = list(segments)  # force evaluation
-    print(f"Segment count: {len(segments)}")
+
     result = " ".join(segment.text for segment in segments).strip().lower()
-    print(f"Heard: {result}")
+    
     return result
